@@ -1,31 +1,16 @@
 import ply.lex as lex
 
+# reserved words
+reserved = 'if|then|else|while|for|class|func|try|catch|return|use|as'
+x = {}
+for word in reserved.split('|'):
+  x[word] = word.upper()
+reserved = x
+del(x)
+
 # List of token names.
-tokens = (
-    'FUNC',
-    'CLASS',
-    'IF',
-    'FOR',
-    'USE',
-    'AS',
-    'ID',
-    'ASSIGN',
-    'DOT',
-    'NUMBER',
-    'COLON',
-    'PLUS',
-    'MINUS',
-    'TIMES',
-    'DIVIDE',
-    'CPP_COMMENT',
-    'LPAREN',
-    'RPAREN',
-    'LANGL',
-    'RANGL',
-    'LBRACK',
-    'RBRACK',
-    'STRING',
-)
+tokens = 'ID|ASSIGN|DOT|NUMBER|COLON|PLUS|MINUS|TIMES|DIVIDE|CPP_COMMENT|LPAREN|RPAREN|LANGL|RANGL|LBRACK|RBRACK|STRING'.split(
+  '|') + list(reserved.values())
 
 # Regular expression rules for simple tokens. These are in precedence order.
 t_FUNC = r'func'
@@ -48,8 +33,13 @@ t_RANGL  = r'>'
 t_LBRACK  = r'\['
 t_RBRACK  = r'\]'
 t_COLON = r':'
-t_ID = r'[a-zA-Z_][a-zA-Z0-9_]*'
 t_STRING = r'".*?"'
+
+def t_ID(t):
+    r'[a-zA-Z_][a-zA-Z_0-9]*'
+    if t.value[0].islower():
+      t.type = reserved.get(t.value,'ID')    # Check for reserved words
+    return t
 
 def t_NUMBER(t):
     r'\d+'
