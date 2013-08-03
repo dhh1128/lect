@@ -101,7 +101,7 @@ how many instances of a particular class are likely to exist, about how threads
 interact. And as any marriage therapist will attest, talking about issues is
 the beginning of turning problems into opportunities. :-)
 
-Lect strives to make common and correct behavior
+Lect strives to keep common and correct behavior
 automatic, corner cases possible, and inconsistent or unsafe
 choices disallowed--while expressing a programmer's
 intent with terse precision. This takes much of the busy work out of writing
