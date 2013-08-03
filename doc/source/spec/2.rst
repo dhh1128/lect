@@ -1,0 +1,118 @@
+2. Building blocks
+==================
+Code is written in files, and when we build the code, the output is a
+program or a library. Most language specs define how files are interpreted
+and eventually transformed into programs, and stop there.
+
+Lect's structural inventory is a bit richer. Each of the concepts below
+is formally describable in lect. You will notice that much metaphor behind
+these terms owes itself to biology; this is a deliberate choice and reflects
+lect's philosophy that life is a great role model for elegant solutions
+to complex problems.
+
+.. _`program`:
+
+2.1 program
+-----------
+In this spec, we use the word "program" in a slightly narrower sense than casual
+speech. A program is a coherent set of machine instructions, packaged as a single file,
+where the instructions are in a form that can be executed by the machine.
+
+Programs are not source code.
+
+Programs are inert recipes, *not* the machine processes that accumulate resources
+and history as a result of executing programs. Think of programs
+as binary files.
+
+Lect programs carry a rich manifest of metadata. They are uniquely identified by
+a constant-through-time guid, plus a version stamp. Non-lect programs may use a
+different scheme. Programs may be copied or renamed, but
+if they have the same unique identifier and version, their identity does not change. Duplicates
+of the same program are called *program copies*.
+
+.. _`application`:
+
+2.2 application
+---------------
+An application is a set of one or more programs that, as a unit, is runnable (can instantiate
+one process on a machine). For example, a lect program named 'helloworld'
+might depend on the lect runtime and the C++ runtime (additional
+programs). The combination of these three programs is loaded by a machine
+when helloworld runs; thus, the trio constitutes an application.
+
+Applications are inert recipes for processes, not the processes themselves.
+*Process* **X** is an embodiment of *application* **Y**.
+
+Applications may be packaged in various ways:
+
+  * a zipped archive
+  * a collection of files and folders
+  * BLOBs in a database...
+
+One program in an application has an entry point that makes it runnable. This
+program provides a unique identifier for the application, which does not vary
+over time. It may also provide a version stamp. In lect applications, the
+identifier and version stamp for an application are conceptually distinct from
+those for its lead program, but for applications with different genealogy,
+this may not be the case.
+
+.. _`machine`:
+
+2.3 machine
+------------
+A machine is a computer (in the CS sense) that runs applications. Machines may be physical hardware or virtual
+machines. They may be in-between constructs that blur these lines (such as
+linux virtual containers). They may be Java Virtual Machines or similar sandboxed
+environments. What they have in common is that they provide resources and
+services inside of which applications run. Applications never cross machine boundaries.
+
+.. _`user`:
+
+2.4 user
+------------
+An independent entity, external to a given application, that interacts
+with it either directly or indirectly. People and other systems of
+software are two important types of user. 
+Users often make demands on a program, and they may also have
+responsibilities.
+
+.. _`habitat`:
+
+2.5 habitat
+------------
+An environment that hosts software. This may be as simple as a single operating
+system or JVM (see `machine`_), but more typically it involves multiple machines, the
+infrastructure that connects them, the framework that manages them, and
+the services that the framework provides:
+
+  * EC2, GCE, and Azure are examples of public cloud habitats.
+  * OpenStack can be used to build a private cloud habitat.
+  * BOINC-like distributed compute farms are habitats.
+  * A supercompute cluster--or a grid of such clusters is a habitat.
+  * Hybrid, federated, and custom fabrics are also possible.
+
+.. _`ecosystem`:
+
+2.6 ecosystem
+--------------
+A specific habitat instance, and the mixture of applications and processes that
+interacts within it.
+
+.. _`population`:
+
+2.6 population
+--------------
+The set of all processes within a habitat that derive from a common application.
+
+.. _`suite`:
+
+2.7 suite
+---------
+A collection of applications that is intended to deploy and/or be sold as a unit. Ecosystems
+are not the same thing; they may consist of any mixture of independent programs and
+suites. Suites can sometimes be decomposed into individual products, although functionality
+may diminish.
+
+Suites are a unit of product packaging, *not* necessarily a unit of development.
+
+

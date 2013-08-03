@@ -1,6 +1,3 @@
-Lect Specification
-==================
-
 1. Introduction
 ----------------
 Lect is a powerful, general-purpose, object-oriented programming
