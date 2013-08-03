@@ -3,31 +3,107 @@ Lect Specification
 
 1. Introduction
 ----------------
-Lect is a general-purpose, concurrent, object-oriented programming
-language. It is compiled and memory-managed (but not garbage-collected). 
+Lect is a powerful, general-purpose, object-oriented programming
+language, intended for production use in commercial and free
+software. It compiles to a platform-neutral intermediate representation,
+and is then typically optimized and linked. JIT features are also
+supported. Lect is memory-managed but not garbage-collected, and
+its performance and footprint are comparable to C/C++.
 
-Lect borrows liberally from other modern programming languages--
-notably, python, C++, java, C#, go, and D. Given the wide acceptance and
-deep thought behind these languages, one might wonder why a new language
-is needed. The answer is that cloud computing, pervasive network
-connectivity, and the mobile revolution are changing the software
-landscape. We need a language that is friendlier to massive parallelism,
-that helps teams to communicate even though they're scattered across
-the globe, that has a built-in immune system against bugs and
-technical debt, that teaches correct mental models without being pedantic,
-that facilitates distributed and organic architectures, that scales
-well up down and out, that performs to the potential of hardware, and
-that understands concepts such as fabrics and ecosystems.
+Lect is free and open-source, usable under the `Apache 2 license <http://www.apache.org/licenses/LICENSE-2.0.html>`_.
+It is not controlled by any vendor.
 
-In short, we need a better way to expand the software landscape.
+Lect's sweet spot is complex software that exists across releases,
+has multiple maintainers, and uses many of the capabilities
+of modern hardware and fabrics. Lect may be usable in quick-and-dirty
+scripting, and by one-person dev teams, but this is not where it shines.
 
-Lect does not pretend to be all things to all programmers. Its features
-are less compelling if your problem calls for quick-and-dirty scripting,
-or if you are a one-person software shop. But it shines when problems
-are complex, evolving, parallel, and network-centric. It shines when
-testing is difficult, performance demands are high, and many people
-will create and maintain the code.
+Lect borrows liberally from other modern programming languages--notably,
+python, C++, java, C#, go, and D. Given the wide acceptance and deep
+thought behind these languages, one might wonder why lect is needed.
+Don't we have everything we need, already?
 
-2. How this spec is organized
-------------------------------
-This specification describes lect's grammar, 
+1.1 Why
+_______
+
+Complexity is at the heart of the answer. Since C++ was invented in
+1979, waves of innovation have complicated the hardware, software,
+and human landscape in which software development takes place:
+
+  * dramatically faster chips
+  * the maturation of RDBMS technology
+  * the explosion of storage capacity
+  * solid-state drives
+  * cheap RAM
+  * the internet
+  * GPUs, MICs, and FPGAs
+  * virtualization
+  * the death of long-lived careers at a single company
+  * FOSS
+  * malicious hacking
+  * web apps
+  * SOAP and RESTful web services
+  * unicode
+  * distributed architectures
+  * cloud computing
+  * big data
+  * NoSQL and NewSQL
+  * the ebb and flow of outsourcing trends
+  * MMORPGs
+  * social networks
+  * the mobile revolution
+  * battles over privacy and intellectual property
+  * BYOD
+  * TPMs
+  * TLS, IPSec, and other security protocols
+  * ipv6
+
+... and so forth. Whew!
+
+Programming languages have matured as well. The modern descendants of
+C (and languages with different genealogies) embody many
+innovations in syntax, toolset, libraries, and community. Nonetheless,
+these languages have at best achieved a stalemate with complexity.
+We may have learned a bit about agile processes and TDD, and we may
+have more powerful IDEs and debuggers, but the average programmer today
+has to specialize in a corner of the software universe if she or he
+has any hopes of mastery. Off-by-one errors and race conditions are
+still with us; unhandled exceptions and null pointers are about as
+common as they were decades ago. Besides leaking pointers, we now
+have to worry about security vulnerabilities and optimization at
+exascale. Creating sophisticated, living ecosystems
+of cooperating applications is possible, but enormously difficult.
+
+  *Lect harnesses complexity for programmers, promoting fearless
+  and empowered creativity to solve the next generation of the
+  world's problems. This is its* "`why 
+  <http://www.ted.com/talks/simon_sinek_how_great_leaders_inspire_action.html>`_".
+
+1.2 How
+_______
+
+Delivering on this goal is no easy proposition, and skeptics would be right to
+wonder if lect offers anything that's truly new. Is it just another way
+to say, "Hello, world"?
+
+Yes and no.
+
+Lect enthusiastically borrows *syntax* and *structural notions* from other languages.
+We already have concise notation for arrays and bit twiddling and
+inheritance and generics. Why reinvent the wheel? In these respects, lect is just 
+a pleasant amalgam of best-of-breed solutions.
+
+However, a lot of the *semantics* in lect are fresh. Lect didn't invent them, as a general
+rule, but by embodying advanced concepts in a vocabulary and a pattern of expression, it
+opens up new possibilities for the coder. Lect lets you talk about the deployment
+strategy of an ecosystem, about the stages of an application's lifecycle, about
+how many instances of a particular class are likely to exist, about how threads
+interact. And as any marriage therapist will attest, talking about issues is
+the beginning of turning problems into opportunities. :-)
+
+Lect strives to make common and correct behavior
+automatic, corner cases possible, and inconsistent or unsafe
+choices disallowed--while expressing a programmer's
+intent with terse precision. This takes much of the busy work out of writing
+code, makes bugs less likely, and facilitates teamwork.
+
