@@ -1,10 +1,11 @@
-.. lect documentation master file, created by
-   sphinx-quickstart on Fri Aug  2 17:40:25 2013.
+Lect
+=====
 
-lect documentation
-================================
+.. figure:: images/lect-logo-256.png
+   :align: right
 
-Contents:
+   Harness complexity. Abandon fear. Create.
+
 
 .. toctree::
    :maxdepth: 2

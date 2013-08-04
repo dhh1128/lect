@@ -1,0 +1,20 @@
+.. image:: ../images/lect-logo-128.png
+   :align: right
+
+3. Grammar
+==================
+Human language is more that its grammar; it encompasses semantics, pragmatics,
+vocabulary, conventions, prosodics, phonology, and many other dimensions.
+
+Similarly, the lect language is more than its grammar. However, the grammar
+is important, because it describes how most information must be structured.
+
+3.1 Core Concepts
+-----------------
+Lect is written as utf-8 text. When lect is stored in files have the ".x" extension,
+the file is a compilation unit, and its contents must be fully described by the
+context-free lexical and syntactic grammars below.
+
+3.1 Lexical Grammar
+-------------------
+

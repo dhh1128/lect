@@ -1,5 +1,8 @@
+.. image:: ../images/lect-logo-128.png
+   :align: right
+
 1. Introduction
-----------------
+===============
 Lect is a powerful, general-purpose, object-oriented programming
 language, intended for production use in commercial and free
 software. It compiles to a platform-neutral intermediate representation,
@@ -13,16 +16,15 @@ It is not controlled by any vendor.
 Lect's sweet spot is complex software that exists across releases,
 has multiple maintainers, and uses many of the capabilities
 of modern hardware and fabrics. Lect may be usable in quick-and-dirty
-scripting, and by one-person dev teams, but this is not where it shines.
+scripting, and by one-person dev teams, but this is not where it shines the most.
 
 Lect borrows liberally from other modern programming languages--notably,
 python, C++, java, C#, go, and D. Given the wide acceptance and deep
 thought behind these languages, one might wonder why lect is needed.
 Don't we have everything we need, already?
 
-1.1 Why
-_______
-
+1.1 Why lect?
+-------------
 Complexity is at the heart of the answer. Since C++ was invented in
 1979, waves of innovation have complicated the hardware, software,
 and human landscape in which software development takes place:
@@ -76,9 +78,8 @@ of cooperating applications is possible, but enormously difficult.
   world's problems. This is its* "`why 
   <http://www.ted.com/talks/simon_sinek_how_great_leaders_inspire_action.html>`_".
 
-1.2 How
-_______
-
+1.2 How lect's different
+------------------------
 Delivering on this goal is no easy proposition, and skeptics would be right to
 wonder if lect offers anything that's truly new. Is it just another way
 to say, "Hello, world"?
@@ -104,3 +105,11 @@ choices disallowed--while expressing a programmer's
 intent with terse precision. This takes much of the busy work out of writing
 code, makes bugs less likely, and facilitates teamwork.
 
+1.3 What's in a name?
+---------------------
+Lect's name alludes to the concept, in human linguistics, of a unique language
+variant--think "idiolect", "sociolect", "ethnolect", and "dialect".
+
+1.4 Conventions
+---------------
+In recent years it's been fashionable to associate a 

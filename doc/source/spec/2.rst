@@ -1,3 +1,6 @@
+.. image:: ../images/lect-logo-128.png
+   :align: right
+
 2. Building blocks
 ==================
 Code is written in files, and when we build the code, the output is a
