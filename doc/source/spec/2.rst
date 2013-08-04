@@ -1,4 +1,4 @@
-.. image:: ../images/lect-logo-128.png
+.. image:: ../images/lect-logo-tight-77x128.png
    :align: right
 
 2. Building blocks

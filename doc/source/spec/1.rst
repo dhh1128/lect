@@ -1,4 +1,4 @@
-.. image:: ../images/lect-logo-128.png
+.. image:: ../images/lect-logo-tight-77x128.png
    :align: right
 
 1. Introduction
@@ -107,9 +107,63 @@ code, makes bugs less likely, and facilitates teamwork.
 
 1.3 What's in a name?
 ---------------------
-Lect's name alludes to the concept, in human linguistics, of a unique language
-variant--think "idiolect", "sociolect", "ethnolect", and "dialect".
+The suffix "lect" is used in linguistics to denote a language variant that's
+associated with a particular place or group. Folks from a particular ethnic
+background might share an "ethnolect". Members of a society might share a
+"sociolect." A single person has a characteristic and unique variation of
+the common language called an "idiolect."
+
+Lect aims to be the preferred language variant of accomplished software
+craftsmen--those who dream of using computers to solve the most ambitious
+problems we can imagine.
+
+By alluding to linguistics in its name, lect acknowledges the need for rich,
+living semantics that speak to people, not just a syntax that compilers can
+render into CPU instructions. As Martin Fowler observed in *Refactoring*,
+"Any fool can write code that a computer can understand. Good programmers
+write code that humans can understand."
 
 1.4 Conventions
 ---------------
-In recent years it's been fashionable to associate a 
+Conventions are a way for the lect community to build and propagate a
+unique culture.
+
+1.4.1 Logo
+__________
+Lect is identified by a logo--the "fractal fern":
+
+.. image:: ../images/lect-logo-tight-154x256.png
+
+This logo was chosen because of the following resonance:
+
+* A fern is a complex and beautiful form of life, but it is familiar, not flashy.
+  The principles for keeping one growing and healthy are simple. A fern's
+  requirements are modest.
+* Lect draws much inspiration from patterns observed in living systems.
+* The fern shows the golden ratio, which is suggestive of balance and
+  proportion.
+* The fern also looks like a fractal. Fractals embody infinite complexity
+  and recurring patterns in terse, distilled formulas.
+
+1.4.2 Animal
+____________
+It has been fashionable in recent years to associate programming languages
+with an animal. Perl gets a camel; python gets its namesake. However, lect has no
+mascot other than the fractal fern.
+
+1.4.3 Spelling
+______________
+The name of the language is only capitalized when title or sentence position
+require it. In the middle of a sentence, just say "lect" without capitalizing.
+
+1.4.4 Slang
+___________
+In the python community, best practice is described as "pythonic." For
+fans of REST, a well designed web service is "RESTful." In the lect
+community, slang plays with "el" words or words that have "lect" in them:
+
+* "My first solution was a bit of a kludge. Any advice about the electrical way to do it?"
+* "Dude! That makes it so much faster! Your tweak is delectable!"
+* "I need an electrician to give me advice about this program."
+* *(in a discussion about porting to lect)* "I'm not sure whether that C++ code is eligible."
+* "Tomorrow I start a new project, and I get to pick the programming language. Election day!"

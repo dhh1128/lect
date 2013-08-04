@@ -1,7 +1,7 @@
 Lect
 =====
 
-.. figure:: images/lect-logo-256.png
+.. figure:: images/lect-logo-tight-154x256.png
    :align: right
 
    Harness complexity. Abandon fear. Create.
