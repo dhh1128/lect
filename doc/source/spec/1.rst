@@ -145,18 +145,30 @@ This logo was chosen because of the following resonance:
 * The fern also looks like a fractal. Fractals embody infinite complexity
   and recurring patterns in terse, distilled formulas.
 
-1.4.2 Animal
+1.4.2 Colors
+____________
+Obviously, the world will talk about lect in whatever color scheme it chooses.
+But have you noticed how javaland is often red-on-white (due to Oracle's influence),
+or layers of blue (due to javadoc's default output)? Have you noticed that python
+is blue and white, or blue and cyan?
+
+In all of lect's internal materials, we'll use a color scheme like the one in this
+documentation: white, with a main accent that's green, and secondary accents
+in blue and gray. This goes well with the fractal fern. Members of the community
+are encouraged to use similar choices where applicable.
+
+1.4.3 Animal
 ____________
 It has been fashionable in recent years to associate programming languages
 with an animal. Perl gets a camel; python gets its namesake. However, lect has no
 mascot other than the fractal fern.
 
-1.4.3 Spelling
+1.4.4 Spelling
 ______________
 The name of the language is only capitalized when title or sentence position
 require it. In the middle of a sentence, just say "lect" without capitalizing.
 
-1.4.4 Slang
+1.4.5 Slang
 ___________
 In the python community, best practice is described as "pythonic." For
 fans of REST, a well designed web service is "RESTful." In the lect
