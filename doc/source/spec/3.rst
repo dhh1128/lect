@@ -17,8 +17,9 @@ context-free lexical and syntactic grammars below.
 
 3.1 Lexical Grammar
 -------------------
-.. note::
-   This grammar is incomplete. Right now it's essentially the grammar for python. Needs work.
+.. note:: TODO
+
+  This grammar is incomplete. Right now it's essentially the grammar for python. Needs work.
 
 ::
 

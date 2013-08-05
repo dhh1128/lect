@@ -11,7 +11,7 @@ Lect
    :maxdepth: 2
 
    spec/index
-   tutorial
+   ref/index
 
 
 
