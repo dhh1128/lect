@@ -10,6 +10,7 @@ Lect
 .. toctree::
    :maxdepth: 2
 
+   better/index
    spec/index
    ref/index
 

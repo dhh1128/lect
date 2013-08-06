@@ -1,0 +1,74 @@
+4. Data types
+=============
+Lect is a strongly, statically typed language. Its primitive and reference types match
+the inventory in `java 7 <http://docs.oracle.com/javase/specs/jls/se7/html/jls-4.html`_,
+with a few minor exceptions. Likewise, semantics are a close match. Details appear
+below, after a discussion about the philosophy behind certain choices.
+
+4.1 Strongly typed but not type-obsessed
+----------------------------------------
+Most runtime-interpreted languages are loosely (and duck-) typed.
+This flexibility is popular with programmers, who feel freed to
+focus on core issues. Fans point out that their code is less 
+cluttered with type-centric housekeeping, which has a maintenance and readability
+benefit. And they critique the cast proliferation in statically typed languages
+as enabling subtle bugs that defeat what the language is trying to guarantee.
+
+On the other hand, strongly typed languages allow compilers to optimize and
+validate code far more exhaustively than their interpreted cousins. When you
+must have speed, you need the compiler's early and proactive help. And say
+what you like about casts being ugly and dangerous--at least you know they
+are happening. In runtime-interpreted languages, casting happens all the
+time; you just don't notice until one doesn't work.
+
+Lect aims at a "best of both worlds" strategy that asks programmers for clarity
+when needed, and lets them off the hook otherwise. It has a flexible duck
+typing mechanism. Yet it validates nearly all type semantics at compile time,
+and it sacrifices no optimization goals.
+ 
+Where `auto` could be used in C++, no
+type declaration is required at all in lect. The compiler simply figures it
+out, and tells you with an error if this isn't possible. In practice, this
+means that types must be declared on members, return types, and
+parameters (unless generics are in play), and almost never in other places.
+
+Duck typing in lect uses a combination of the implicit interface concept
+from go, and implicit generics.
+
+4.2 Kinds of types
+------------------
+There are three main kinds of types in lect: primitive and reference: ::
+
+  Type:
+    PrimitiveType
+    ReferenceType
+    ValueType
+
+ValueType has no analog in java, but it is similar in nature to value types in
+recent versions of .NET.
+
+As with java, there is also a `null` type that has special characteristics:
+
+* It is the type of the expression `null`.
+* It has no name, so it is impossible to declare a variable or cast to the null type.
+* The null reference is the only possible value of an expression of the null type.
+* The null reference can undergo a widening reference conversion to any reference type.
+
+4.3 Primitive types
+-------------------
+All primitives types have a reserved key word and are defined in this spec. ::
+
+	PrimitiveType:
+	    NumericType
+	    boolean
+
+	NumericType:
+	    IntegralType
+	    FloatingPointType
+
+	IntegralType: one of
+	    byte short int long char
+
+	FloatingPointType: one of
+	    float double
+

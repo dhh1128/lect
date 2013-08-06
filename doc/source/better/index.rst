@@ -4,14 +4,9 @@
 Lect Specification
 ================================
 
-This is the formal specification of the lect language.
+Learn why lect is a better solution than the languages in common usage today.
 
 .. toctree::
 
-   1
-   2
-   3
-   4
-   5
-   6
+   collaboration
 
