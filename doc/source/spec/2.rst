@@ -4,8 +4,8 @@
 2. Building blocks
 ==================
 Code is written in files, and when we build the code, the output is a
-program or a library. Most language specs define how files are interpreted
-and eventually transformed into programs, and stop there.
+assembly or a library. Most language specs define how files are interpreted
+and eventually transformed into assemblies, and stop there.
 
 Lect's structural inventory is a bit richer. Each of the concepts below
 is formally describable in lect. You will notice that much metaphor behind
@@ -13,34 +13,31 @@ these terms owes itself to biology; this is a deliberate choice and reflects
 lect's philosophy that life is a great role model for elegant solutions
 to complex problems.
 
-.. _`program`:
+.. _`assembly`:
 
-2.1 program
------------
-In this spec, we use the word "program" in a slightly narrower sense than casual
-speech. A program is a coherent set of machine instructions, packaged as a single file,
-where the instructions are in a form that can be executed by the machine.
+2.1 assembly
+-------------
+An assembly is a coherent set of machine instructions, packaged as a single file,
+where the instructions are in a form that can be executed by the machine. Libraries
+(both static and dynamic) and programs (assemblies with an OS-compatible entry
+point that makes them runnable) are two sub-categories of assemblies.
 
-Programs are not source code.
+Assemblies are created by compiling source code; they are not source code itself.
 
-Programs are inert recipes, *not* the machine processes that accumulate resources
-and history as a result of executing programs. Think of programs
-as binary files.
-
-Lect programs carry a rich manifest of metadata. They are uniquely identified by
-a constant-through-time guid, plus a version stamp. Non-lect programs may use a
-different scheme. Programs may be copied or renamed, but
+Lect assemblies carry a rich manifest of metadata. They are uniquely identified by
+a constant-through-time guid, plus a version stamp. Non-lect assemblies may use a
+different scheme. Assemblies may be copied or renamed, but
 if they have the same unique identifier and version, their identity does not change. Duplicates
-of the same program are called *program copies*.
+of the same assembly are called *assembly copies*.
 
 .. _`application`:
 
 2.2 application
 ---------------
-An application is a set of one or more programs that, as a unit, is runnable (can instantiate
-one process on a machine). For example, a lect program named 'helloworld'
+An application is a set of one or more assemblies that, as a unit, is runnable (can instantiate
+one process on a machine). For example, a lect assembly named 'helloworld'
 might depend on the lect runtime and the C++ runtime (additional
-programs). The combination of these three programs is loaded by a machine
+assemblies). The combination of these three assemblies is loaded by a machine
 when helloworld runs; thus, the trio constitutes an application.
 
 Applications are inert recipes for processes, not the processes themselves.
@@ -52,11 +49,11 @@ Applications may be packaged in various ways:
   * a collection of files and folders
   * BLOBs in a database...
 
-One program in an application has an entry point that makes it runnable. This
-program provides a unique identifier for the application, which does not vary
+One assembly in an application has an entry point that makes it runnable. This
+assembly provides a unique identifier for the application, which does not vary
 over time. It may also provide a version stamp. In lect applications, the
 identifier and version stamp for an application are conceptually distinct from
-those for its lead program, but for applications with different genealogy,
+those for its lead assembly, but for applications with different genealogy,
 this may not be the case.
 
 .. _`machine`:
@@ -76,7 +73,7 @@ services inside of which applications run. Applications never cross machine boun
 An independent entity, external to a given application, that interacts
 with it either directly or indirectly. People and other systems of
 software are two important types of user. 
-Users often make demands on a program, and they may also have
+Users often make demands on a assembly, and they may also have
 responsibilities.
 
 .. _`habitat`:
@@ -112,7 +109,7 @@ The set of all processes within a habitat that derive from a common application.
 2.7 suite
 ---------
 A collection of applications that is intended to deploy and/or be sold as a unit. Ecosystems
-are not the same thing; they may consist of any mixture of independent programs and
+are not the same thing; they may consist of any mixture of independent assemblies and
 suites. Suites can sometimes be decomposed into individual products, although functionality
 may diminish.
 

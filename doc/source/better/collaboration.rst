@@ -84,8 +84,7 @@ This brings us to lect's second innovation: lect makes it exceedingly easy to de
 custom semantics. Let's rewrite the first function in lect, and be clearer about
 what we intend: ::
 
-  class vehicle:
-    marks: +threadsafe
+  class vehicle +threadsafe:
     func set_attr:
       takes:
         which: vehicle_attr +customizable

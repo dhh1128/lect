@@ -1,372 +1,577 @@
 grammar lect;
 
-// starting point for parsing a java file
-compilationUnit
-    :   useStatement* def* EOF
-    ;
+// ----- Start symbols for the grammar.
 
-def
-    :   (classDef | funcDef)
-    ;
+// A single interactive statement, entered in REPL prompt.
+// Note the extra line break to terminate.
+single_input
+  : LINE_BREAK | simple_stmt | compound_stmt LINE_BREAK
+  ;
 
-useStatement
-    :   USE usedName LINE_BREAK
-    ;
+// A single file of code.
+file_input
+  : (LINE_BREAK | stmt)* ENDMARKER
+  ;
 
-usedName
-    :   ID ('.' ID)* (AS ID)?
-    ;
+// An expression passed to the eval() function.
+eval_input
+  : testlist LINE_BREAK* ENDMARKER
+  ;
 
-classDef
-    :   CLASS ID ':' LINE_BREAK classContent
-    ;
+stmt
+  : simple_stmt | compound_stmt
+  ;
 
-funcDef
-    :   FUNC ID retDef? ':' funcContent
-    ;
+simple_stmt
+  : small_stmt (';' small_stmt)* ';' LINE_BREAK
+  ;
 
-retDef
-    :   '=>' ID // todo: handle multiple returns and named returns
-    ;
+small_stmt
+  : (expr_stmt | print_stmt | del_stmt | pass_stmt | flow_stmt | import_stmt | assert_stmt)
+  ;
 
-classContent
-    :   'undefined'
-    ;
+expr_stmt
+  : testlist (augassign (yield_expr|testlist) | (ASSIGN (yield_expr|testlist))*)
+  ;
 
-funcContent
-    :   'undefined'
-    ;
+augassign
+  : ('+=' | '-=' | '*=' | '/=' | '%=' | '&=' | '|=' | '^=' | '<<=' | '>>=' | '**=' | '//=')
+  ;
 
+// For normal assignments, additional restrictions enforced by the interpreter
+print_stmt
+  : 'print' ( ( test (',' test)* ',' )? | '>>' test ( (',' test)+ ','? )? )
+  ;
 
+assert_stmt
+  : ASSERT test (',' test)?
+  ;
 
-// ¤3.9 Keywords
+del_stmt
+  : DEL exprlist
+  ;
 
-ABSTRACT : 'abstract';
-AS : 'as';
-ASSERT : 'assert';
-BOOL : 'bool';
-BREAK : 'break';
-BYTE : 'byte';
-CASE : 'case';
-CATCH : 'catch';
-CHAR : 'char';
-CLASS : 'class';
-CONST : 'const';
-CONTINUE : 'continue';
-DEFAULT : 'default';
-DO : 'do';
-DOUBLE : 'double';
-ELSE : 'else';
-ENUM : 'enum';
-EXTENDS : 'extends';
-FINAL : 'final';
-FINALLY : 'finally';
-FLOAT : 'float';
-FOR : 'for';
-FUNC : 'func';
-IF : 'if';
-IMPLEMENTS : 'implements';
-USE : 'use';
-INSTANCEOF : 'instanceof';
-INT : 'int';
-INTERFACE : 'interface';
-LONG : 'long';
-NATIVE : 'native';
-NEW : 'new';
-PACKAGE : 'package';
-PRIVATE : 'private';
-PROTECTED : 'protected';
-PUBLIC : 'public';
-RETURN : 'return';
-SHORT : 'short';
-STATIC : 'static';
-STRICTFP : 'strictfp';
-SUPER : 'super';
-SWITCH : 'switch';
-SYNCHRONIZED : 'synchronized';
-THIS : 'this';
-THROW : 'throw';
-THROWS : 'throws';
-TRANSIENT : 'transient';
-TRY : 'try';
-VOID : 'void';
-VOLATILE : 'volatile';
-WHILE : 'while';
+pass_stmt
+  : PASS
+  ;
 
-// ¤3.10.1 Integer Literals
+flow_stmt
+  : break_stmt | continue_stmt | return_stmt | throw_stmt | yield_stmt
+  ;
 
-IntegerLiteral
-	:	DecimalIntegerLiteral
-	|	HexIntegerLiteral
-	|	OctalIntegerLiteral
-	|	BinaryIntegerLiteral
-	;
+break_stmt
+  : BREAK
+  ;
+
+continue_stmt
+  : CONTINUE
+  ;
+
+return_stmt
+  : RETURN testlist?
+  ;
+
+yield_stmt
+  : yield_expr
+  ;
+
+throw_stmt
+  : THROW (test (',' test (',' test))?)?
+  ;
+
+// URLs refer to directory structure within sandbox or component, or to
+// a URL on the web from which a component can be downloaded.
+url
+  : protocol IDENTIFIER ('/' IDENTIFIER)*?
+  ;
+
+protocol
+  : ('@component' | '@sandbox' | 'http' 's'?) '://'
+  ;
+
+import_stmt
+  : IMPORT url (AS IDENTIFIER)?
+  ;
+
+compound_stmt
+  : if_stmt | while_stmt | for_stmt | try_stmt | with_stmt | funcdef | classdef
+  ;
+
+if_stmt
+  : IF test ':' suite (ELIF test ':' suite)* (ELSE ':' suite)?
+  ;
+
+while_stmt
+  : WHILE test ':' suite
+  ;
+
+for_stmt
+  : FOR exprlist IN testlist ':' suite
+  ;
+
+try_stmt
+  : TRY ':' suite (except_clause ':' suite)+ (FINALLY ':' suite)?
+  ;
+
+with_stmt
+  : WITH with_item (',' with_item)*  ':' suite
+  ;
+
+with_item
+  : test (AS expr)
+  ;
+
+// NB compile.c makes sure that the default except clause is last
+except_clause
+  : CATCH (test ((AS | ',') test)?)?
+  ;
+
+suite
+  : simple_stmt | LINE_BREAK INDENT stmt+ DEDENT
+  ;
+
+// A "test" is an expression that might or might not be wrapped in boolean
+// logic. The boolean operator precedence is reflected in how the nesting
+// is done here.
+
+test
+  : or_test (IF or_test ELSE test)? | lambdef
+  ;
+
+// OR is the lowest-priority boolean expr; AND is bound
+// more tightly.
+or_test
+  : and_test (OR and_test)*
+  ;
+
+// AND has a higher priority than OR, but lower than NOT.
+and_test
+  : not_test (AND not_test)*
+  ;
+
+// NOT has a higher priority than AND.
+not_test
+  : NOT not_test | comparison
+  ;
+
+comparison
+  : expr (comp_op expr)*
+  ;
+
+comp_op
+  : '<'|'>'|'=='|'>='|'<='|'!='|IN|NOT IN|'is'|'is' 'not'
+  ;
+
+expr
+  : xor_expr ('|' xor_expr)*
+  ;
+
+xor_expr
+  : and_expr ('^' and_expr)*
+  ;
+
+and_expr
+  : shift_expr ('&' shift_expr)*
+  ;
+
+shift_expr
+  : arith_expr (('<<'|'>>') arith_expr)*
+  ;
+
+arith_expr
+  : term (('+'|'-') term)*
+  ;
+
+term
+  : factor (('*'|'/'|'%'|'//') factor)*
+  ;
+
+factor
+  : ('+'|'-'|'~') factor | power
+  ;
+
+power
+  : atom trailer* ('**' factor)?
+  ;
+
+atom
+  : ('(' (yield_expr|testlist_comp)? ')' | '[' listmaker? ']' | '{' dictorsetmaker? '}' | '`' testlist1 '`' | IDENTIFIER | number | STR_LITERAL+)
+  ;
+
+listmaker
+  : test ( list_for | (',' test)* ','? )
+  ;
+
+testlist_comp
+  : test ( comp_for | (',' test)* ','? )
+  ;
+
+// A mark is something like:
+//   +pure
+//   +text(1, 50)
+// Marks can appear between identifiers and their values.
+mark
+  : ('-' | '+') IDENTIFIER ('(' arglist ')')?
+  ;
+
+marks
+  : mark+
+  ;
+
+funcdef
+  : FUNC IDENTIFIER ':' LINE_BREAK suite
+  ;
+
+// We recognize function invocations by the presence of args at the end
+// of an identifier.
+args
+  : '(' arglist? ')'
+  ;
+
+arglist
+  : arg (',' arg)*
+  ;
+
+// An arg is something passed to a called function. Do not confuse with a
+// param, which is the definition of what might be passed.
+arg
+  : (IDENTIFIER ASSIGN)? test
+  ;
+
+lambdef
+  : 'lambda' 'FIXME' ':' test
+  ;
+
+trailer
+  : '(' arglist? ')' | '[' subscriptlist ']' | '.' IDENTIFIER
+  ;
+
+subscriptlist
+  : subscript (',' subscript)* ','?
+  ;
+
+subscript
+  : '.' '.' '.' | test | test? ':' test? sliceop?
+  ;
+
+sliceop
+  : ':' test?
+  ;
+
+exprlist
+  : expr (',' expr)* ','?
+  ;
+
+testlist
+  : test (',' test)* ','?
+  ;
+
+dictorsetmaker
+  : ( (test ':' test (comp_for | (',' test ':' test)* ','?)) | (test (comp_for | (',' test)* ','?)) )
+  ;
+
+classdef
+  : CLASS IDENTIFIER ':' suite
+  ;
+
+// The reason that keywords are test nodes instead of IDENTIFIER is that using IDENTIFIER
+// results in an ambiguity. ast.c makes sure it's a IDENTIFIER.
+argument
+  : test comp_for? | test ASSIGN test
+  ;
+
+list_iter
+  : list_for | list_if
+  ;
+
+list_for
+  : FOR exprlist IN testlist list_iter?
+  ;
+
+list_if
+  : IF test list_iter?
+  ;
+
+comp_iter
+  : comp_for | comp_if
+  ;
+
+comp_for
+  : FOR exprlist IN or_test comp_iter?
+  ;
+
+comp_if
+  : IF test comp_iter?
+  ;
+
+testlist1
+  : test (',' test)*
+  ;
+
+yield_expr
+  : YIELD testlist?
+  ;
+
+number
+  : INTEGER_LITERAL | FLOAT_LITERAL
+  ;
+
+INTEGER_LITERAL
+  : DECIMAL_INTEGER_LITERAL | HEX_INTEGER_LITERAL | OCT_INTEGER_LITERAL | BINARY_INTEGER_LITERAL
+  ;
 
 fragment
-DecimalIntegerLiteral
-	:	DecimalNumeral IntegerTypeSuffix?
-	;
+DECIMAL_INTEGER_LITERAL
+  : DECIMAL_NUMERAL INTEGER_TYPE_SUFFIX?
+  ;
 
 fragment
-HexIntegerLiteral
-	:	HexNumeral IntegerTypeSuffix?
-	;
+HEX_INTEGER_LITERAL
+  : HEX_NUMERAL INTEGER_TYPE_SUFFIX?
+  ;
 
 fragment
-OctalIntegerLiteral
-	:	OctalNumeral IntegerTypeSuffix?
-	;
+OCT_INTEGER_LITERAL
+  : OCT_NUMERAL INTEGER_TYPE_SUFFIX?
+  ;
 
 fragment
-BinaryIntegerLiteral
-	:	BinaryNumeral IntegerTypeSuffix?
-	;
+BINARY_INTEGER_LITERAL
+  : BIN_NUMERAL INTEGER_TYPE_SUFFIX?
+  ;
+
+// Allow all integer literals to have "L" at the end
+// to force 64-bit.
+fragment
+INTEGER_TYPE_SUFFIX
+  : [lL]
+  ;
 
 fragment
-IntegerTypeSuffix
-	:	[lL]
-	;
+DECIMAL_NUMERAL
+  : '0' | NON_ZERO_DIGIT (DIGITS? | UNDERSCORES DIGITS)
+  ;
 
 fragment
-DecimalNumeral
-	:	'0'
-	|	NonZeroDigit (Digits? | Underscores Digits)
-	;
+DIGITS
+  : DIGIT (DIGITS_AND_UNDERSCORES? DIGIT)?
+  ;
 
 fragment
-Digits
-	:	Digit (DigitsAndUnderscores? Digit)?
-	;
+DIGIT
+  : '0' | NON_ZERO_DIGIT
+  ;
 
 fragment
-Digit
-	:	'0'
-	|	NonZeroDigit
-	;
+NON_ZERO_DIGIT
+  : [1-9]
+  ;
 
 fragment
-NonZeroDigit
-	:	[1-9]
-	;
+DIGITS_AND_UNDERSCORES
+  : DIGIT_OR_UNDERSCORE+
+  ;
 
 fragment
-DigitsAndUnderscores
-	:	DigitOrUnderscore+
-	;
+DIGIT_OR_UNDERSCORE
+  : DIGIT | '_'
+  ;
+
+// Like java, allow _ as a separator or grouping char between digits
+// for those who'd like improved readability of numeric literals.
+fragment
+UNDERSCORES
+  : '_'+
+  ;
 
 fragment
-DigitOrUnderscore
-	:	Digit
-	|	'_'
-	;
+HEX_NUMERAL
+  : '0' [xX] HEX_DIGITS
+  ;
 
 fragment
-Underscores
-	:	'_'+
-	;
+HEX_DIGITS
+  : HEX_DIGIT (HEX_DIGITS_AND_UNDERSCORES? HEX_DIGIT)?
+  ;
 
 fragment
-HexNumeral
-	:	'0' [xX] HexDigits
-	;
+HEX_DIGIT
+  : [0-9a-fA-F]
+  ;
 
 fragment
-HexDigits
-	:	HexDigit (HexDigitsAndUnderscores? HexDigit)?
-	;
+HEX_DIGITS_AND_UNDERSCORES
+  : HEX_DIGIT_OR_UNDERSCORE+
+  ;
 
 fragment
-HexDigit
-	:	[0-9a-fA-F]
-	;
+HEX_DIGIT_OR_UNDERSCORE
+  : HEX_DIGIT | '_'
+  ;
 
 fragment
-HexDigitsAndUnderscores
-	:	HexDigitOrUnderscore+
-	;
+OCT_NUMERAL
+  : '0' UNDERSCORES? OCT_DIGITS
+  ;
 
 fragment
-HexDigitOrUnderscore
-	:	HexDigit
-	|	'_'
-	;
+OCT_DIGITS
+  : OCT_DIGIT (OCT_DIGITS_AND_UNDERSCORES? OCT_DIGIT)?
+  ;
 
 fragment
-OctalNumeral
-	:	'0' Underscores? OctalDigits
-	;
+OCT_DIGIT
+  : [0-7]
+  ;
 
 fragment
-OctalDigits
-	:	OctalDigit (OctalDigitsAndUnderscores? OctalDigit)?
-	;
+OCT_DIGITS_AND_UNDERSCORES
+  : OCT_DIGIT_OR_UNDERSCORE+
+  ;
 
 fragment
-OctalDigit
-	:	[0-7]
-	;
+OCT_DIGIT_OR_UNDERSCORE
+  : OCT_DIGIT | '_'
+  ;
 
 fragment
-OctalDigitsAndUnderscores
-	:	OctalDigitOrUnderscore+
-	;
+BIN_NUMERAL
+  : '0' [bB] BIN_DIGITS
+  ;
 
 fragment
-OctalDigitOrUnderscore
-	:	OctalDigit
-	|	'_'
-	;
+BIN_DIGITS
+  : BIN_DIGIT (BIN_DIGIT_AND_UNDERSCORES? BIN_DIGIT)?
+  ;
 
 fragment
-BinaryNumeral
-	:	'0' [bB] BinaryDigits
-	;
+BIN_DIGIT
+  : [01]
+  ;
 
 fragment
-BinaryDigits
-	:	BinaryDigit (BinaryDigitsAndUnderscores? BinaryDigit)?
-	;
+BIN_DIGIT_AND_UNDERSCORES
+  : BIN_DIGIT_OR_UNDERSCORE+
+  ;
 
 fragment
-BinaryDigit
-	:	[01]
-	;
-
-fragment
-BinaryDigitsAndUnderscores
-	:	BinaryDigitOrUnderscore+
-	;
-
-fragment
-BinaryDigitOrUnderscore
-	:	BinaryDigit
-	|	'_'
-	;
+BIN_DIGIT_OR_UNDERSCORE
+  : BIN_DIGIT | '_'
+  ;
 
 // ¤3.10.2 Floating-Point Literals
 
-FloatingPointLiteral
-	:	DecimalFloatingPointLiteral
-	|	HexadecimalFloatingPointLiteral
-	;
+FLOAT_LITERAL
+  : DECIMAL_FLOAT_LITERAL | HEX_FLOAT_LITERAL
+  ;
 
 fragment
-DecimalFloatingPointLiteral
-	:	Digits '.' Digits? ExponentPart? FloatTypeSuffix?
-	|	'.' Digits ExponentPart? FloatTypeSuffix?
-	|	Digits ExponentPart FloatTypeSuffix?
-	|	Digits FloatTypeSuffix
-	;
+DECIMAL_FLOAT_LITERAL
+  : DIGITS '.' DIGITS? EXPONENT_PART? FLOAT_TYPE_SUFFIX?
+  | '.' DIGITS EXPONENT_PART? FLOAT_TYPE_SUFFIX?
+  | DIGITS EXPONENT_PART FLOAT_TYPE_SUFFIX?
+  | DIGITS FLOAT_TYPE_SUFFIX
+  ;
 
 fragment
-ExponentPart
-	:	ExponentIndicator SignedInteger
-	;
+EXPONENT_PART
+  : EXPONENT_INDICATOR SIGNED_INTEGER
+  ;
 
 fragment
-ExponentIndicator
-	:	[eE]
-	;
+EXPONENT_INDICATOR
+  : [eE]
+  ;
 
 fragment
-SignedInteger
-	:	Sign? Digits
-	;
+SIGNED_INTEGER
+  : SIGN? DIGITS
+  ;
 
 fragment
-Sign
-	:	[+-]
-	;
+SIGN
+  : [+-]
+  ;
 
 fragment
-FloatTypeSuffix
-	:	[fFdD]
-	;
+FLOAT_TYPE_SUFFIX
+  : [fFdD]
+  ;
 
 fragment
-HexadecimalFloatingPointLiteral
-	:	HexSignificand BinaryExponent FloatTypeSuffix?
-	;
+HEX_FLOAT_LITERAL
+  : HEX_SIGNIFICAND BINARY_EXPONENT FLOAT_TYPE_SUFFIX?
+  ;
 
 fragment
-HexSignificand
-	:	HexNumeral '.'?
-	|	'0' [xX] HexDigits? '.' HexDigits
-	;
+HEX_SIGNIFICAND
+  : HEX_NUMERAL '.'?
+  | '0' [xX] HEX_DIGITS? '.' HEX_DIGITS
+  ;
 
 fragment
-BinaryExponent
-	:	BinaryExponentIndicator SignedInteger
-	;
+BINARY_EXPONENT
+  : BINARY_EXPONENT_INDICATOR SIGNED_INTEGER
+  ;
 
 fragment
-BinaryExponentIndicator
-	:	[pP]
-	;
+BINARY_EXPONENT_INDICATOR
+  : [pP]
+  ;
 
-// ¤3.10.3 Boolean Literals
+IDENTIFIER
+  : [a-z_][a-z_0-9]*
+  ;
 
-BooleanLiteral
-	:	'true'
-	|	'false'
-	;
+FOR: 'for';
+IF: 'if';
+CLASS: 'class';
 
-// ¤3.10.4 Character Literals
-
-CharacterLiteral
-	:	'\'' SingleCharacter '\''
-	|	'\'' EscapeSequence '\''
-	;
-
-fragment
-SingleCharacter
-	:	~['\\]
-	;
-
-// ¤3.10.5 String Literals
-
-StringLiteral
-	:	'"' StringCharacters? '"'
-	;
+CHAR_LITERAL
+  : '\'' ONE_CHAR '\''
+  | '\'' ESCAPE_SEQ '\''
+  ;
 
 fragment
-StringCharacters
-	:	StringCharacter+
-	;
+ONE_CHAR
+  : ~['\\]
+  ;
+
+// String Literals
+
+STR_LITERAL
+  : '"' STR_CHARS? '"'
+  ;
 
 fragment
-StringCharacter
-	:	~["\\]
-	|	EscapeSequence
-	;
+STR_CHARS
+  : STR_CHAR+
+  ;
+
+fragment
+STR_CHAR
+  : ~["\\] | ESCAPE_SEQ
+  ;
 
 // ¤3.10.6 Escape Sequences for Character and String Literals
 
 fragment
-EscapeSequence
-	:	'\\' [btnfr"'\\]
-	|	OctalEscape
-    |   UnicodeEscape
-	;
+ESCAPE_SEQ
+  : '\\' [btnfr"'\\]
+  | UNI_ESCAPE
+  ;
 
 fragment
-OctalEscape
-	:	'\\' OctalDigit
-	|	'\\' OctalDigit OctalDigit
-	|	'\\' ZeroToThree OctalDigit OctalDigit
-	;
+UNI_ESCAPE
+  : '\\' 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
+  ;
 
 fragment
-UnicodeEscape
-    :   '\\' 'u' HexDigit HexDigit HexDigit HexDigit
-    ;
+ZERO_TO_3
+  : [0-3]
+  ;
 
-fragment
-ZeroToThree
-	:	[0-3]
-	;
-
-// ¤3.11 Separators
+// Separators
 
 LPAREN : '(';
 RPAREN : ')';
@@ -378,7 +583,7 @@ SEMI : ';';
 COMMA : ',';
 DOT : '.';
 
-// ¤3.12 Operators
+// Operators
 
 ASSIGN : '=';
 GT : '>';
@@ -391,8 +596,6 @@ EQUAL : '==';
 LE : '<=';
 GE : '>=';
 NOTEQUAL : '!=';
-AND : '&&';
-OR : '||';
 INC : '++';
 DEC : '--';
 ADD : '+';
@@ -417,22 +620,44 @@ RSHIFT_ASSIGN : '>>=';
 URSHIFT_ASSIGN : '>>>=';
     
 WS  // only within a statement
-    :   [ \t]+ -> skip
-    ;
+  : [ \t]+ -> skip
+  ;
 
 LINE_BREAK // statement separator in most cases
-    :   [\r\n\u000C]
-    ;
+  : [\r\n\u000C]
+  ;
 
 COMMENT
-    :   '/*' .*? '*/' -> skip
-    ;
+  : '##' .*? '##' -> skip
+  ;
 
 LINE_COMMENT
-    :   '//' ~[\r\n]* -> skip
-    ;
+  : '#' ~[\r\n]* -> skip
+  ;
 
-ID
-    : [a-zA-Z_][a-zA-Z0-9_]* 
-    ;
-    
+// Keywords
+BREAK: 'break';
+RETURN: 'return';
+IMPORT: 'import';
+WHILE: 'while';
+ELSE: 'else';
+IN: 'in';
+TRY: 'try';
+ELIF: 'elif';
+FINALLY: 'finally';
+WITH: 'with';
+AS: 'as';
+CATCH: 'catch';
+YIELD: 'yield';
+TRUE: 'true';
+FALSE: 'false';
+NULL: 'null';
+AND: 'and';
+OR: 'or';
+NOT: 'not';
+ASSERT: 'assert';
+DEL: 'del';
+PASS: 'pass';
+CONTINUE: 'continue';
+THROW: 'throw';
+FUNC: 'func';
