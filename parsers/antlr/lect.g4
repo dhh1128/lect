@@ -51,13 +51,14 @@ pseudocode_stmt // FIXME: figure out where to allow pseudocode; probably in func
   : sentence '.'
   ;
 
-sentence
+// FIXME: I'd like to support sentence fragments that end in a colon, so that I can
+// handle "step routines" or nest pseudocode.
+sentence 
   : CAPITAL_LETTER .*? '.'
   ;
 
-fragment
 CAPITAL_LETTER
-  : [A-Z]
+  : [A-Z\u0080-\uffef]
   ;
 
 //FIXME: line continuations?
