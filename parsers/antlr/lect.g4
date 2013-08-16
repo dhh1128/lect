@@ -27,7 +27,7 @@ simple_stmt
   ;
 
 small_stmt
-  : (expr_stmt | print_stmt | del_stmt | pass_stmt | flow_stmt | import_stmt | assert_stmt)
+  : (expr_stmt | print_stmt | stub_stmt | pass_stmt | flow_stmt | import_stmt | assert_stmt)
   ;
 
 expr_stmt
@@ -44,11 +44,26 @@ print_stmt
   ;
 
 assert_stmt
-  : ASSERT test (',' test)?
+  : ASSERT test // FIXME: allow explanatory string in case of failure?
   ;
 
-del_stmt
-  : DEL exprlist
+pseudocode_stmt // FIXME: figure out where to allow pseudocode; probably in func body...
+  : sentence '.'
+  ;
+
+sentence
+  : CAPITAL_LETTER .*? '.'
+  ;
+
+fragment
+CAPITAL_LETTER
+  : [A-Z]
+  ;
+
+//FIXME: line continuations?
+
+stub_stmt
+  : STUB
   ;
 
 pass_stmt
@@ -76,7 +91,7 @@ yield_stmt
   ;
 
 throw_stmt
-  : THROW (test (',' test (',' test))?)?
+  : THROW test?
   ;
 
 // URLs refer to directory structure within sandbox or component, or to
@@ -656,8 +671,8 @@ AND: 'and';
 OR: 'or';
 NOT: 'not';
 ASSERT: 'assert';
-DEL: 'del';
-PASS: 'pass';
+STUB: 'stub';
 CONTINUE: 'continue';
 THROW: 'throw';
 FUNC: 'func';
+PASS: 'pass';
