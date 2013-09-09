@@ -35,9 +35,38 @@ Other programming languages produce binaries, and in many cases these are callab
 from lect. These binaries are called "foreign assemblies," and they have a subset
 of lect assembly properties.
 
+.. _`component`:
+
+2.2 component
+-------------
+A component is the source-code complement to a built assembly. A component
+is a collection of source code that is used to build one assembly, and all
+of its collateral artifacts.
+
+Components are the main unit of code reuse in lect.
+
+Components are versioned. They are separately buildable. They may have
+(transitive) dependency relationships with one another.
+
+Components are encapsulated beneath a single containing folder in the file
+system, and all components that participate in a larger build process
+are direct siblings of one another (there are not nested components).
+
+.. _`sandbox`:
+
+2.3 sandbox
+-----------
+A sandbox is a collection of components that build together. It manifests as
+a folder in the file system that directly contains one or more component
+folders.
+
+The components in a sandbox may have different source code repositories, use
+different build settings, have different licensing restrictions, etc.
+
+
 .. _`application`:
 
-2.2 application
+2.4 application
 ---------------
 An application is a set of one or more assemblies that, as a unit, is runnable (can instantiate
 one process on a machine). For example, a lect assembly named 'helloworld'
@@ -63,7 +92,7 @@ this may not be the case.
 
 .. _`machine`:
 
-2.3 machine
+2.5 machine
 ------------
 A machine is a computer (in the CS sense) that runs applications. Machines may be physical hardware or virtual
 machines. They may be in-between constructs that blur these lines (such as
@@ -74,7 +103,7 @@ never crosses machine boundaries.
 
 .. _`user`:
 
-2.4 user
+2.6 user
 ------------
 An independent entity, external to a given application, that interacts
 with it either directly or indirectly. People and other systems of
@@ -84,7 +113,7 @@ responsibilities.
 
 .. _`habitat`:
 
-2.5 habitat
+2.7 habitat
 ------------
 An environment that hosts software. This may be as simple as a single operating
 system or JVM (see `machine`_), but more typically it involves multiple machines, the
@@ -99,20 +128,20 @@ the services that the framework provides:
 
 .. _`ecosystem`:
 
-2.6 ecosystem
+2.8 ecosystem
 --------------
 A specific habitat instance, and the mixture of applications and processes that
 interacts within it.
 
 .. _`population`:
 
-2.6 population
+2.9 population
 --------------
 The set of all processes within a habitat that derive from a common application.
 
 .. _`suite`:
 
-2.7 suite
+2.10 suite
 ---------
 A collection of applications that is intended to deploy and/or be sold as a unit. Ecosystems
 are not the same thing; they may consist of any mixture of independent assemblies and
