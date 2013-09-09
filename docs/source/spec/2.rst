@@ -3,9 +3,8 @@
 
 2. Building blocks
 ==================
-Code is written in files, and when we build the code, the output is a
-assembly or a library. Most language specs define how files are interpreted
-and eventually transformed into assemblies, and stop there.
+Most language specs define how files are interpreted
+and eventually transformed into binaries, and stop there.
 
 Lect's structural inventory is a bit richer. Each of the concepts below
 is formally describable in lect. You will notice that much metaphor behind
@@ -25,10 +24,16 @@ point that makes them runnable) are two sub-categories of assemblies.
 Assemblies are created by compiling source code; they are not source code itself.
 
 Lect assemblies carry a rich manifest of metadata. They are uniquely identified by
-a constant-through-time guid, plus a version stamp. Non-lect assemblies may use a
-different scheme. Assemblies may be copied or renamed, but
-if they have the same unique identifier and version, their identity does not change. Duplicates
+a constant-through-time guid, plus a version stamp. They may be signed and
+licensed. They may have bundles of auxiliary info attached to enable branding
+or localization.
+Assemblies may be copied or renamed, but if they have the same unique identifier 
+and version, their identity does not change. Duplicates
 of the same assembly are called *assembly copies*.
+
+Other programming languages produce binaries, and in many cases these are callable
+from lect. These binaries are called "foreign assemblies," and they have a subset
+of lect assembly properties.
 
 .. _`application`:
 
@@ -49,7 +54,7 @@ Applications may be packaged in various ways:
   * a collection of files and folders
   * BLOBs in a database...
 
-One assembly in an application has an entry point that makes it runnable. This
+At least one assembly in an application has an entry point that makes it runnable. This
 assembly provides a unique identifier for the application, which does not vary
 over time. It may also provide a version stamp. In lect applications, the
 identifier and version stamp for an application are conceptually distinct from
@@ -64,7 +69,8 @@ A machine is a computer (in the CS sense) that runs applications. Machines may b
 machines. They may be in-between constructs that blur these lines (such as
 linux virtual containers). They may be Java Virtual Machines or similar sandboxed
 environments. What they have in common is that they provide resources and
-services inside of which applications run. Applications never cross machine boundaries.
+services inside of which applications run. A single process (running application)
+never crosses machine boundaries.
 
 .. _`user`:
 

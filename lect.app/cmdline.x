@@ -1,12 +1,13 @@
 class cmdline:
-  inherits: core.cli.cmdline
+  inherits: lect.cli.cmdline
   # ctor is how we specify a constructor
   # ctors can call other constructors
-  ctor:
+  create:
     takes:
       args: str[] +variadic
     impl:
-      # The ~'...' notation for strings mean that they are localizable.
+      super.create(args)
+      # The ~'...' notation for strings means that they are localizable.
       help = add_cmd('help', ~'Display help, possibly for a specific sub-command.')
       help.add_positional_token('topic': +optional, ~'specific topic')
       version = add_cmd('version', ~'Display the version of this program.')
@@ -17,7 +18,7 @@ class cmdline:
       # variadic is the equiv of C#'s "paramarray"
       # exists demands that file/folder must exist
       make.add_positional_token('target': path[] +variadic +exists)
-      stub = add_cmd('expand', ~'Expand code where functionality is implied or stubbed.')
-      stub.copy_syntax(make)
+      expand = add_cmd('expand', ~'Expand code where functionality is implied or stubbed.')
+      expand.copy_syntax(make)
       
   

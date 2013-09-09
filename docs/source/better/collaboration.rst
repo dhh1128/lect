@@ -1,7 +1,7 @@
+A programming language that improves collaboration is valuable.
+
 Lect encourages collaboration by...
 ===================================
-
-A programming language that improves collaboration is valuable.
 
 making assumptions explicit
 --------------------------------
@@ -69,7 +69,7 @@ explicitly defines a default answer:
 * Whenever an enum is used as a parameter, any pre-defined value of the enum is
   valid unless the coder specifies otherwise.
 * Numeric and date parameters can carry any value in their range, by default.
-* Null/empty strings are valid unless the coder specifies otherwise.
+* Null args are invalid unless the coder specifies otherwise.
 * Parameters are considered independent unless the coder specifies otherwise.
 * Classes are either thread-safe, or (by default) they are not. Individual methods
   must conform to their class threading strategy.
@@ -88,7 +88,7 @@ what we intend: ::
     func set_attr:
       takes:
         which: vehicle_attr +customizable
-        value: str +text(1, 25) -nullable -empty
+        value: str +text(1, 25)
         since_year: int +range(this.first_year, 2100)
       returns: bool +ifstatechange
       # impl
@@ -114,10 +114,6 @@ tokens preceded by - or +:
   characters only. Its first parameter is a max line count, and its second is a max
   length. This coder is requiring `value` to consist of a single line of at most 25
   characters.
-* `nullable` is self-explanatory. The - in front of it means that the coder is
-  removing a mark that was there by default. Remember that we said that by default,
-  null is a valid value for a string parameter? This overrides that assumption.
-* `empty` is similar to nullable
 * `range` tells what numbers are acceptable values for `since_year`. Consistent with
   ranges everywhere else in lect, this is a half-open range.
 * `ifstatechange` says that the bool's value depends on whether the state of the object

@@ -174,8 +174,8 @@ In the python community, best practice is described as "pythonic." For
 fans of REST, a well designed web service is "RESTful." In the lect
 community, slang plays with "el" words or words that have "lect" in them:
 
-* "My first solution was a bit of a kludge. Any advice about the electrical way to do it?"
-* "Dude! That makes it so much faster! Your tweak is delectable!"
-* "I need an electrician to give me advice about this program."
-* *(in a discussion about porting to lect)* "I'm not sure whether that C++ code is eligible."
-* "Tomorrow I start a new project, and I get to pick the programming language. Election day!"
+* "My first solution was a bit of a kludge. Any advice about the eLECTric way to do it?"
+* "Dude! That makes it so much faster! Your tweak is deLECTable!"
+* "I need an eLECTrician to give me advice about this program."
+* *(in a discussion about porting to lect)* "I'm not sure whether that C++ code is ELigible."
+* "Tomorrow I start a new project, and I get to pick the programming language. ELECTion day!"
