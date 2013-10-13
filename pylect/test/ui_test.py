@@ -5,7 +5,7 @@ _app_root_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 if not _app_root_path in sys.path:
   sys.path.insert(0, _app_root_path)
 
-import ui
+from util import ui
 
 def test_wrap_with_indent():
   #print(('.........X' * 7) + '12345678')

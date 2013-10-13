@@ -5,12 +5,15 @@ _app_root_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 if not _app_root_path in sys.path:
   sys.path.insert(0, _app_root_path)
 
-from parsekit import lparser
+from parse import parser
+from env import sandbox
 
-class LParserTest(unittest.TestCase):
+class ParserTest(unittest.TestCase):
 
   def setUp(self):
     self.root = tempfile.mkdtemp()
+    result = os.rename(self.root, self.root + sandbox.SUFFIX)
+    self.root += sandbox.SUFFIX
     def fill(subdir):
       path = os.path.join(self.root, subdir)
       os.mkdir(path)
@@ -36,12 +39,24 @@ class LParserTest(unittest.TestCase):
     os.rmdir(self.root)
 
   def test_process_handles_correct_files_in_correct_order(self):
-    lparser.process(self.root)
-    items = sys.stdout.getvalue().split('\n')
+    parser.parse(self.root)
+    items = sys.stdout.getvalue()
+    items = items.strip().split('\n')
     items = [l.strip() for l in items if (l.strip() and not l.startswith(' '))]
-    items = ', '.join([l[len(self.root) + 1:] for l in items])
+    items = ', '.join(items)
     #self.old_stdout.write('"%s"\n' % items)
-    assert 'd1/f1.l, d1/f2.l, d1/f3.l, d2/f1.l, d2/f2.l, d2/f3.l' == items
+    self.assertEquals('d1/f1.l, d1/f2.l, d1/f3.l, d2/f1.l, d2/f2.l, d2/f3.l', items)
+
+class ParserTest2(unittest.TestCase):
+
+  def setUp(self):
+    self.old_stdout = sys.stdout
+    sys.stdout = StringIO.StringIO()
+
+  def tearDown(self):
+    sys.stdout = self.old_stdout
 
   def test_sample_sandbox(self):
-    pass
+    my_folder = os.path.abspath(os.path.dirname(__file__))
+    path = os.path.join(my_folder, '..', '..', 'samples', 'traffic' + sandbox.SUFFIX)
+    parser.parse(path)

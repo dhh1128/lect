@@ -44,9 +44,20 @@ def wrap_with_indent(txt, indent=0, width=80):
   wrapped += txt
   return wrapped
 
+def report(msg, indent=0, width=80):
+  if not isinstance(msg, str):
+    msg = str(msg)
+  sys.stdout.write(wrap_with_indent(msg, indent, width) + '\n')
+
 def complain(msg, indent=0, width=80):
+  if not isinstance(msg, str):
+    msg = str(msg)
   sys.stderr.write(wrap_with_indent(msg, indent, width) + '\n')
   return 1
 
-def report(msg, indent=0, width=80):
-  sys.stdout.write(wrap_with_indent(msg, indent, width) + '\n')
+def die(msg, indent=0, width=80):
+  if not isinstance(msg, str):
+    msg = str(msg)
+  sys.stderr.write(wrap_with_indent(msg, indent, width) + '\n')
+  sys.exit(1)
+
