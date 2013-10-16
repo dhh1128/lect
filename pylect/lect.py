@@ -10,11 +10,11 @@ def compile(args):
     targets = ['.']
   exit_code = 0
   for target in targets:
-    exit_code += parser.parse(targets)
+    exit_code += parser.parse(target)
   return exit_code
 
 if __name__ == '__main__':
   try:
-    return compile(sys.argv)
+    sys.exit(compile(sys.argv[1:]))
   except FatalProblem as prob:
     ui.die(prob)
