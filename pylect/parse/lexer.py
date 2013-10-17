@@ -5,6 +5,13 @@ t_colon = ord(':')
 t_number = ord('0')
 t_indent = ord('\t')
 t_comment = ord('#')
+t_open_paren = ord('(')
+t_close_paren = ord(')')
+t_mark = 1
+t_plus = ord('+')
+t_minus = ord('-')
+t_times = ord('*')
+t_divide = ord('/')
 t_invalid = -1
 
 class Lexer:
@@ -12,21 +19,21 @@ class Lexer:
         self.indenter = None
         self.indent_level = 0
         self.beginning_of_line = False
-    
+
     def _spaces(self, txt, i, end):
         while i < end:
             if txt[i] != ' ':
                 return i
             i += 1
         return end
-            
+
     def _number(self, txt, i, end):
         while i < end:
             if not txt[i].isdigit():
                 return i
             i += 1
         return end
-    
+
     def _name(self, txt, i, end):
         while i < end:
             c = txt[i]
@@ -34,15 +41,15 @@ class Lexer:
                 return i
             i += 1
         return end
-            
-    
+
+
     def _rest_of_line(self, txt, i, end):
         while i < end:
             if txt[i] == '\n':
                 return i
             i += 1
         return end
-            
+
     def _get_token(self, txt, i, end):
         self.beginning_of_line = False
         c = txt[i]
@@ -71,8 +78,8 @@ class Lexer:
             return i, self._name(txt, i + 1, end), t_name
         else:
             return i, i + 1, t_invalid
-            
-        
+
+
     def __call__(self, txt):
         i = 0
         end_of_txt = len(txt)
@@ -80,4 +87,3 @@ class Lexer:
             start, end, token_type = self._get_token(txt, i, end_of_txt)
             yield start, end, token_type
             i = end
-            

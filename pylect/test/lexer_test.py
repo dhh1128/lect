@@ -22,9 +22,5 @@ foo: class +threadsafe
       - error_code: int
 '''
     lex = lexer.Lexer()
-    for x in lex(txt):
-      print x
-      if x[2] != 13:
-        print txt[x[0]:x[1]]
-    tuples = [tuple for tuple in lex(txt)]
-    
+    types = [v for t, u, v in lex(txt)]
+    self.assertEqual('[13, 97, 32, 97, 13, 13, 97, 58, 32, 97, 32, -1, 97, 13, 32, 97, 58, 32, 97, 13, 32, 97, 58, 32, 97, 13, 32, 97, 58, 13, 32, -1, 32, 97, 58, 32, 97, 32, -1, 97, 13, 32, 97, 58, 13, 32, -1, 32, 97, 58, 32, 97, 13]', str(types))
