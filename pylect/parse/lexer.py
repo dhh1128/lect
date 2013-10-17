@@ -9,9 +9,18 @@ t_open_paren = ord('(')
 t_close_paren = ord(')')
 t_mark = 1
 t_plus = ord('+')
+t_plus_equals = ord('+') + ord('=')
 t_minus = ord('-')
+t_minus_equals = ord('-') + ord('=')
 t_times = ord('*')
+t_times_equals = ord('*') + ord('=')
 t_divide = ord('/')
+t_divide_equals = ord('/') + ord('=')
+t_equals = ord('=')
+t_tilde = ord('~')
+t_dot = ord('.')
+t_comma = ord(',')
+t_quote = ord('"')
 t_invalid = -1
 
 class Lexer:
@@ -34,6 +43,16 @@ class Lexer:
             i += 1
         return end
 
+    def _quoted(self, txt, i, end):
+        while i < end:
+            c = txt[i]
+            if c == '\\':
+                i += 1
+            elif c == '"':
+                return i
+            i += 1
+        return end
+
     def _name(self, txt, i, end):
         while i < end:
             c = txt[i]
@@ -42,13 +61,21 @@ class Lexer:
             i += 1
         return end
 
-
     def _rest_of_line(self, txt, i, end):
         while i < end:
             if txt[i] == '\n':
                 return i
             i += 1
         return end
+
+    def _operator(self, txt, i, end, operator_token, mark_compatible=False):
+        if i < end - 1:
+            c = txt[i + 1]
+            if mark_compatible and c.isalpha():
+                return i, self._name(txt, i + 2, end), t_mark
+            elif c == '=':
+                return i, i + 2, operator_token + ord('=')
+        return i, i + 1, operator_token
 
     def _get_token(self, txt, i, end):
         self.beginning_of_line = False
@@ -70,6 +97,20 @@ class Lexer:
                 return i, j, t_space
         elif c == '#':
             return i, self._rest_of_line(txt, i + 1, end), t_comment
+        elif c == ',':
+            return i, i + 1, t_comma
+        elif c == '=':
+            return i, i + 1, t_equals
+        elif c == '+':
+            return self._operator(txt, i, end, t_plus, mark_compatible=True)
+        elif c == '-':
+            return self._operator(txt, i, end, t_minus, mark_compatible=True)
+        elif c == '*':
+            return self._operator(txt, i, end, t_times, mark_compatible=False)
+        elif c == '/':
+            return self._operator(txt, i, end, t_divide, mark_compatible=False)
+        elif c == '"':
+            return i, self._quoted(txt, i + 1, end), t_quote
         elif c == ':':
             return i, i + 1, t_colon
         elif c.isdigit():
