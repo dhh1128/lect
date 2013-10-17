@@ -15,13 +15,21 @@ class LexerTest(unittest.TestCase):
     numbers = {}
     for t in tokens:
       n = getattr(lexer, t)
-      print('%s = %s' % (t, n))
       if n in numbers:
         dups.append((t, n))
+        original = (numbers[n], n)
+        if original not in dups:
+          dups.append(original)
       else:
         numbers[n] = t
     if dups:
       self.fail('Duplicate tokens: %s' % ', '.join([str(x) for x in dups]))
+
+  def test_quote(self):
+    txt = '"abc"'
+    lex = lexer.Lexer()
+    for start, end, token_type in lex(txt):
+      self.assertEqual(end, 5)
 
   def test_simple(self):
     txt = '''
@@ -34,7 +42,28 @@ foo: class +threadsafe
       - name: str +nullable
     returns:
       - error_code: int
+    code:
+      # This is a comment
+      x := 3
+      y: double = (x / 6)
+      x += 4
+      y -= 6
+      x /= 4
+      y *= 3
+      y = x.get_avg_rainfall("peru", "summer") * (9 + 2)
+      txt := ~"a translated string"
+
 '''
     lex = lexer.Lexer()
-    types = [v for t, u, v in lex(txt)]
-    self.assertEqual('[13, 97, 32, 97, 13, 13, 97, 58, 32, 97, 32, 1, 13, 32, 97, 58, 32, 97, 13, 32, 97, 58, 32, 97, 13, 32, 97, 58, 13, 32, 45, 32, 97, 58, 32, 97, 32, 1, 13, 32, 97, 58, 13, 32, 45, 32, 97, 58, 32, 97, 13]', str(types))
+    types = [token_type for start, end, token_type in lex(txt)]
+    tokens = [(t, getattr(lexer, t)) for t in dir(lexer) if t.startswith('t_')]
+    missing = []
+    for t in tokens:
+      if t[1] not in types and t[1] != lexer.t_invalid:
+        missing.append(t)
+    if missing:
+      self.fail('Tokens not exercised by test: %s' % ', '.join([str(t) for t in missing]))
+    self.assertEqual(
+      '[13, 97, 32, 97, 13, 13, 97, 58, 32, 97, 32, 1, 13, 9, 97, 58, 32, 97, 13, 9, 97, 58, 32, 97, 13, 9, 97, 58, 13, 9, 45, 32, 97, 58, 32, 97, 32, 1, 13, 9, 97, 58, 13, 9, 45, 32, 97, 58, 32, 97, 13, 9, 97, 58, 13, 9, 35, 13, 9, 97, 32, 58, 61, 32, 48, 13, 9, 97, 58, 32, 97, 32, 61, 32, 40, 97, 32, 47, 32, 48, 41, 13, 9, 97, 32, 104, 32, 48, 13, 9, 97, 32, 106, 32, 48, 13, 9, 97, 32, 108, 32, 48, 13, 9, 97, 32, 103, 32, 48, 13, 9, 97, 32, 61, 32, 97, 46, 97, 40, 34, 44, 32, 34, 41, 32, 42, 32, 40, 48, 32, 43, 32, 48, 41, 13, 9, 97, 32, 58, 61, 32, 126, 34, 13, 13]',
+      str(types))
+

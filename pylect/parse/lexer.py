@@ -12,10 +12,10 @@ t_plus = ord('+')
 t_plus_equals = ord('+') + ord('=')
 t_minus = ord('-')
 t_minus_equals = ord('-') + ord('=')
-t_times = ord('*')
-t_times_equals = ord('*') + ord('=')
-t_divide = ord('/')
-t_divide_equals = ord('/') + ord('=')
+t_star = ord('*')
+t_star_equals = ord('*') + ord('=')
+t_slash = ord('/')
+t_slash_equals = ord('/') + ord('=')
 t_equals = ord('=')
 t_tilde = ord('~')
 t_dot = ord('.')
@@ -49,7 +49,7 @@ class Lexer:
             if c == '\\':
                 i += 1
             elif c == '"':
-                return i
+                return i + 1
             i += 1
         return end
 
@@ -78,47 +78,58 @@ class Lexer:
         return i, i + 1, operator_token
 
     def _get_token(self, txt, i, end):
-        self.beginning_of_line = False
-        c = txt[i]
-        if c == '\n':
-            self.beginning_of_line = True
-            return i, i + 1, t_linebreak
-        elif c == ' ':
-            j = self._spaces(txt, i, end)
-            if self.beginning_of_line:
-                if self.indenter is None:
-                    self.indenter = self.txt[i:j]
-                    return i, j, t_indent
-                elif (j - i) % len(self.indenter) == 0:
-                    return i, j, t_indent
+        bol = False
+        try:
+            c = txt[i]
+            if c == '\n':
+                bol = True
+                return i, i + 1, t_linebreak
+            elif c == ' ':
+                j = self._spaces(txt, i, end)
+                if self.beginning_of_line:
+                    if self.indenter is None:
+                        self.indenter = txt[i:j]
+                        return i, j, t_indent
+                    elif (j - i) % len(self.indenter) == 0:
+                        return i, j, t_indent
+                    else:
+                        return i, self._rest_of_line(txt, i + 1, end), t_invalid
                 else:
-                    return i, self._rest_of_line(txt, i + 1, end), t_invalid
+                    return i, j, t_space
+            elif c == '#':
+                return i, self._rest_of_line(txt, i + 1, end), t_comment
+            elif c == ',':
+                return i, i + 1, t_comma
+            elif c == '=':
+                return i, i + 1, t_equals
+            elif c == '+':
+                return self._operator(txt, i, end, t_plus, mark_compatible=True)
+            elif c == '-':
+                return self._operator(txt, i, end, t_minus, mark_compatible=True)
+            elif c == '*':
+                return self._operator(txt, i, end, t_star, mark_compatible=False)
+            elif c == '/':
+                return self._operator(txt, i, end, t_slash, mark_compatible=False)
+            elif c == '~':
+                return i, i + 1, t_tilde
+            elif c == '(':
+                return i, i + 1, t_open_paren
+            elif c == ')':
+                return i, i + 1, t_close_paren
+            elif c == '"':
+                return i, self._quoted(txt, i + 1, end), t_quote
+            elif c == ':':
+                return i, i + 1, t_colon
+            elif c == '.':
+                return i, i + 1, t_dot
+            elif c.isdigit():
+                return i, self._number(txt, i + 1, end), t_number
+            elif c.isalpha():
+                return i, self._name(txt, i + 1, end), t_name
             else:
-                return i, j, t_space
-        elif c == '#':
-            return i, self._rest_of_line(txt, i + 1, end), t_comment
-        elif c == ',':
-            return i, i + 1, t_comma
-        elif c == '=':
-            return i, i + 1, t_equals
-        elif c == '+':
-            return self._operator(txt, i, end, t_plus, mark_compatible=True)
-        elif c == '-':
-            return self._operator(txt, i, end, t_minus, mark_compatible=True)
-        elif c == '*':
-            return self._operator(txt, i, end, t_times, mark_compatible=False)
-        elif c == '/':
-            return self._operator(txt, i, end, t_divide, mark_compatible=False)
-        elif c == '"':
-            return i, self._quoted(txt, i + 1, end), t_quote
-        elif c == ':':
-            return i, i + 1, t_colon
-        elif c.isdigit():
-            return i, self._number(txt, i + 1, end), t_number
-        elif c.isalpha():
-            return i, self._name(txt, i + 1, end), t_name
-        else:
-            return i, i + 1, t_invalid
+                return i, i + 1, t_invalid
+        finally:
+            self.beginning_of_line = bol
 
 
     def __call__(self, txt):
