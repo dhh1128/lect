@@ -7,6 +7,11 @@ if not _app_root_path in sys.path:
 
 from parse import lexer
 
+def tokenize(txt):
+  lex = lexer.Lexer()
+  tokens = [tuple for tuple in lex(txt)]
+  return tokens
+
 class LexerTest(unittest.TestCase):
 
   def test_unique_tokens(self):
@@ -25,11 +30,18 @@ class LexerTest(unittest.TestCase):
     if dups:
       self.fail('Duplicate tokens: %s' % ', '.join([str(x) for x in dups]))
 
+  def assert_token(self, start, end, token_type, token):
+    self.assertEqual(start, token[0])
+    self.assertEqual(end, token[1])
+    self.assertEqual(token_type, token[2])
+
   def test_quote(self):
-    txt = '"abc"'
-    lex = lexer.Lexer()
-    for start, end, token_type in lex(txt):
-      self.assertEqual(end, 5)
+    token = tokenize('"abc"')[0]
+    self.assert_token(0, 5, lexer.t_quote, token)
+
+  def test_mark(self):
+    token = tokenize('x: +nullable abc')[3]
+    self.assert_token(3, 12, lexer.t_mark, token)
 
   def test_simple(self):
     txt = '''

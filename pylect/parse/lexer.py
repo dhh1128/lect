@@ -21,6 +21,17 @@ t_tilde = ord('~')
 t_dot = ord('.')
 t_comma = ord(',')
 t_quote = ord('"')
+t_modulo = ord('%')
+t_modulo_equals = ord('%') + ord('=')
+t_bit_and = ord('&')
+t_bit_or = ord('|')
+t_bit_xor = ord('^')
+t_lt = ord('<')
+t_lte = ord('<') + ord('=')
+t_2lt = ord('<') * 2
+t_gt = ord('>')
+t_gte = ord('>') + ord('=')
+t_2gt = ord('>') * 2
 t_invalid = -1
 
 class Lexer:
@@ -110,8 +121,16 @@ class Lexer:
                 return self._operator(txt, i, end, t_star, mark_compatible=False)
             elif c == '/':
                 return self._operator(txt, i, end, t_slash, mark_compatible=False)
+            elif c == '%':
+                return self._operator(txt, i, end, t_modulo, mark_compatible=False)
+            elif c == '&':
+                return self._operator(txt, i, end, t_bit_and, mark_compatible=False)
+            elif c == '|':
+                return self._operator(txt, i, end, t_bit_or, mark_compatible=False)
+            elif c == '^':
+                return self._operator(txt, i, end, t_bit_xor, mark_compatible=False)
             elif c == '~':
-                return i, i + 1, t_tilde
+                return self._operator(txt, i, end, t_tilde, mark_compatible=False)
             elif c == '(':
                 return i, i + 1, t_open_paren
             elif c == ')':
@@ -122,6 +141,22 @@ class Lexer:
                 return i, i + 1, t_colon
             elif c == '.':
                 return i, i + 1, t_dot
+            elif c == '<':
+                if i < end - 1:
+                    c = txt[i+1]
+                    if c == '=':
+                        return i, i + 2, t_lte
+                    elif c == '<':
+                        return i, i + 2, t_2lt
+                return i, i + 1, t_lt
+            elif c == '>':
+                if i < end - 1:
+                    c = txt[i+1]
+                    if c == '=':
+                        return i, i + 2, t_gte
+                    elif c == '<':
+                        return i, i + 2, t_2gt
+                return i, i + 1, t_gt
             elif c.isdigit():
                 return i, self._number(txt, i + 1, end), t_number
             elif c.isalpha():
